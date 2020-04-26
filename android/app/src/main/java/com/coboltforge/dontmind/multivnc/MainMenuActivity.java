@@ -25,17 +25,16 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,10 +51,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+
+import com.coboltforge.dontmind.multivnc.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -328,11 +330,6 @@ public class MainMenuActivity extends AppCompatActivity implements IMDNS, Lifecy
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.mainmenuactivitymenu,menu);
-
-		menu.findItem(R.id.itemMDNSRestart).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.findItem(R.id.itemImportExport).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.findItem(R.id.itemOpenDoc).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
 		return true;
 	}
 
@@ -342,25 +339,27 @@ public class MainMenuActivity extends AppCompatActivity implements IMDNS, Lifecy
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId())
-		{
-		case R.id.itemMDNSRestart :
-			serverlist.removeAllViews();
-			findViewById(R.id.discovered_servers_waitwheel).setVisibility(View.VISIBLE);
+		switch (item.getItemId()) {
+			case R.id.itemSettings:
+				startActivity(new Intent(this, SettingsActivity.class));
+				break;
+			case R.id.itemMDNSRestart:
+				serverlist.removeAllViews();
+				findViewById(R.id.discovered_servers_waitwheel).setVisibility(View.VISIBLE);
 
-			try {
-				boundMDNSService.restart();
-			}
-			catch(NullPointerException e) {
-			}
-			break;
-		case R.id.itemImportExport :
-			startActivity(new Intent(this, ImportExportActivity.class));
-			break;
-		case R.id.itemOpenDoc :
-			Intent intent = new Intent (this, AboutActivity.class);
-			this.startActivity(intent);
-			break;
+				try {
+					boundMDNSService.restart();
+				} catch (NullPointerException e) {
+					//TODO handle exception
+				}
+				break;
+			case R.id.itemImportExport:
+				startActivity(new Intent(this, ImportExportActivity.class));
+				break;
+			case R.id.itemOpenDoc:
+				Intent intent = new Intent(this, AboutActivity.class);
+				this.startActivity(intent);
+				break;
 		}
 		return true;
 	}
